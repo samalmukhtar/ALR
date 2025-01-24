@@ -19,6 +19,8 @@
             --pattern6: #006666;
             --pattern7: #666600;
             --pattern8: #660066;
+            --nouranic-color: #FFFFFF;
+            --dhulmanic-color: #000000;
             /* ألوان العناصر */
             --element-fire: #FFD700;    /* النار - ذهبي */
             --element-water: #4169E1;   /* الماء - أزرق */
@@ -80,6 +82,14 @@
 
         .word {
             margin-bottom: 4px;
+        }
+
+        .letter-nouranic {
+            color: var(--nouranic-color);
+        }
+
+        .letter-dhulmanic {
+            color: var(--dhulmanic-color);
         }
 
         .number {
@@ -187,6 +197,9 @@
             'ذ': 700, 'ض': 800, 'ظ': 900, 'غ': 1000
         };
 
+        // الحروف النورانية (نص حكيم قاطع له سر)
+        const nouranicLetters = new Set(['ن', 'ص', 'ح', 'ك', 'ي', 'م', 'ق', 'ا', 'ط', 'ع', 'ل', 'ه', 'س', 'ر']);
+
         const zodiacSigns = [
             "الحمل", "الثور", "الجوزاء", "السرطان", 
             "الأسد", "العذراء", "الميزان", "العقرب",
@@ -194,19 +207,15 @@
         ];
 
         const zodiacElements = {
-            // النار
             0: 'fire',    // الحمل
             4: 'fire',    // الأسد
             8: 'fire',    // القوس
-            // التراب
             1: 'earth',   // الثور
             5: 'earth',   // العذراء
             9: 'earth',   // الجدي
-            // الهواء
             2: 'air',     // الجوزاء
             6: 'air',     // الميزان
             10: 'air',    // الدلو
-            // الماء
             3: 'water',   // السرطان
             7: 'water',   // العقرب
             11: 'water'   // الحوت
@@ -224,14 +233,12 @@
         };
 
         function getWordPattern(word, number) {
-            // التحقق من وجود الكلمة في أي من الأنماط
             for (let pattern in patterns) {
                 if (patterns[pattern].some(key => word.includes(key))) {
                     return pattern;
                 }
             }
             
-            // التصنيف بناءً على القيمة العددية
             if (number > 1000) return 'pattern1';
             if (number > 800) return 'pattern2';
             if (number > 600) return 'pattern3';
@@ -256,6 +263,12 @@
             return Array.from(text).reduce((sum, char) => sum + (abjadValues[char] || 0), 0);
         }
 
+        function colorizeWord(word) {
+            return Array.from(word).map(char => 
+                `<span class="${nouranicLetters.has(char) ? 'letter-nouranic' : 'letter-dhulmanic'}">${char}</span>`
+            ).join('');
+        }
+
         function createCell(word, index) {
             const cell = document.createElement('div');
             const number = convertToAbjad(word);
@@ -269,7 +282,7 @@
 
             const wordDiv = document.createElement('div');
             wordDiv.className = 'word';
-            wordDiv.textContent = word;
+            wordDiv.innerHTML = colorizeWord(word);
 
             const numberDiv = document.createElement('div');
             numberDiv.className = 'number';
